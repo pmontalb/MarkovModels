@@ -1,2 +1,4 @@
 # MarkovModels
-Classical models implemented by a Markov operator's perspective
+This repository contains some basic code for using stochastic models in the form of Markov Chains.
+
+
