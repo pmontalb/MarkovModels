@@ -43,7 +43,7 @@ def stochastic_model_sk():
 
     lv.set_initial_state_index(sln.underlying_curve.spot_rate(0))
     lv.create_total_stochastic_kernels(t)
-    lv.plot_probability_distribution_function(title="Shifted Log Normal")
+    lv.plot_probability_distribution_function(title="Local Volatility")
 
 
 def monte_carlo_simulation():
@@ -91,4 +91,4 @@ def monte_carlo_simulation():
 
 
 if __name__ == "__main__":
-    monte_carlo_simulation()
+    stochastic_model_sk()
