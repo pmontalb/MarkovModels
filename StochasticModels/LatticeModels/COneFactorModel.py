@@ -1,5 +1,6 @@
 import numpy as np
 import scipy.linalg as linalg
+import matplotlib.pyplot as plt
 
 from StochasticModels.LatticeModels.CLatticeModel import LatticeModel
 
@@ -115,7 +116,6 @@ class OneFactorModel(LatticeModel):
         self.x0 = np.argmin(abs(self.grid - initial_value))
 
     def plot_probability_distribution_function(self, initial_point=None, title=""):
-        import matplotlib.pyplot as plt
         if initial_point is None:
             initial_point = self.x0
 
@@ -126,7 +126,6 @@ class OneFactorModel(LatticeModel):
         if n_plots > 1:
             ax2 = fig.add_subplot(1, n_plots, 2)
         for t in sorted(self.total_stochastic_kernels):
-            print("t = " + str(t) + ": " + str(sum(self.total_stochastic_kernels[t][initial_point, :])))
             ax1.plot(self.grid, self.total_stochastic_kernels[t][initial_point, :], label=str(t))
             if n_plots > 1:
                 ax2.plot(self.grid, self.total_cumulative_stochastic_kernels[t][initial_point, :],

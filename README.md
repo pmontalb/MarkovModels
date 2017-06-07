@@ -1,4 +1,4 @@
-# MarkovModels
+# Stochastic Models: A Python implementation with Markov Kernels
 This repository contains some basic code for using stochastic models in the form of Markov Chains.
 
 For the time being the discount curve is given by a Nelson-Siegel or a Nelson-Svennson-Siegel model. A cubic spline implementation is although straightforward and recommended.
@@ -18,6 +18,7 @@ The *main.py* function *stochastic_model_sk* can be run for producing the follow
 <p align="center">
   <img src="https://raw.githubusercontent.com/pmontalb/MarkovModels/master/hullWhitePdf.png">
   <img src="https://raw.githubusercontent.com/pmontalb/MarkovModels/master/shiftedLogNormalPdf.png">
+  <img src="https://raw.githubusercontent.com/pmontalb/MarkovModels/master/localVolPdf.png">
 </p>
 
 The *MonteCarloModels* module solves the Stochastic Differential Equation associated with the model in a more accurate way than the usual discretization. Since in this framework we are able to calculate the CDF with virtually no effort, we can generate uniform number in [0, 1] and find the inverse CDF. In this way is possible to have a simulated path that distributes according to the model PDF.
@@ -27,4 +28,5 @@ The *main.py* function *monte_carlo_simulation* can be run for producing the fol
 <p align="center">
   <img src="https://raw.githubusercontent.com/pmontalb/MarkovModels/master/hullWhiteMonteCarlo.png">
   <img src="https://raw.githubusercontent.com/pmontalb/MarkovModels/master/shiftedLogNormalMonteCarlo.png">
+  <img src="https://raw.githubusercontent.com/pmontalb/MarkovModels/master/localVolMonteCarlo.png">
 </p>

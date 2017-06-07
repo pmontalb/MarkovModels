@@ -2,6 +2,7 @@ from datetime import date
 from Curves.CNelsonSiegelDiscountCurve import NelsonSiegelDiscountCurve
 from StochasticModels.LatticeModels.InterestRateModels.CHullWhiteOneFactorModel import HullWhiteOneFactorModel
 from StochasticModels.LatticeModels.InterestRateModels.CShiftedLogNormalModel import ShiftedLogNormalModel
+from StochasticModels.LatticeModels.InterestRateModels.CShiftedLocalVolatilityModel import ShiftedLocalVolatility
 from StochasticModels.LatticeModels.MonteCarloModels.COneFactorInterestRateMonteCarlo import OneFactorInterestRateMonteCarlo
 import matplotlib.pyplot as plt
 plt.style.use('classic')
@@ -26,6 +27,12 @@ def stochastic_model_sk():
     sigma_sln = .1
     sln = ShiftedLogNormalModel(d, x_min_sln, x_max_sln, shift, sigma_sln, curve)
 
+    x_min_lv = 0.0
+    x_max_lv = +.2
+    beta = .7
+    sigma_lv = .1
+    lv = ShiftedLocalVolatility(d, x_min_lv, x_max_lv, shift, sigma_lv, beta, curve)
+
     hw.set_initial_state_index(hw.underlying_curve.spot_rate(0))
     hw.create_total_stochastic_kernels(t)
     hw.plot_probability_distribution_function(title="Hull-White")
@@ -33,6 +40,10 @@ def stochastic_model_sk():
     sln.set_initial_state_index(sln.underlying_curve.spot_rate(0))
     sln.create_total_stochastic_kernels(t)
     sln.plot_probability_distribution_function(title="Shifted Log Normal")
+
+    lv.set_initial_state_index(sln.underlying_curve.spot_rate(0))
+    lv.create_total_stochastic_kernels(t)
+    lv.plot_probability_distribution_function(title="Shifted Log Normal")
 
 
 def monte_carlo_simulation():
@@ -64,6 +75,18 @@ def monte_carlo_simulation():
     sln_mc = OneFactorInterestRateMonteCarlo(sln, t)
     sln_mc.generate_monte_carlo_path(15)
     sln_mc.plot("Shifted Log Normal")
+    # -------------------------------------------------------------------------------------------
+
+    # ------------------------------- SHIFTED LOG NORMAL ---------------------------------------
+    x_min_lv = 0.0
+    x_max_lv = +.2
+    beta = .7
+    sigma_lv = .1
+    lv = ShiftedLocalVolatility(d, x_min_lv, x_max_lv, phi, sigma_lv, beta, curve)
+
+    lv_mc = OneFactorInterestRateMonteCarlo(lv, t)
+    lv_mc.generate_monte_carlo_path(15)
+    lv_mc.plot("Local Volatility")
     # -------------------------------------------------------------------------------------------
 
 

@@ -12,6 +12,7 @@ from Curves.CNelsonSiegelDiscountCurve import NelsonSiegelDiscountCurve
 from StochasticModels.ClosedFormModels.CHullWhiteModel import discount_factor_observed_at
 from StochasticModels.LatticeModels.InterestRateModels.CLogNormalModel import LogNormalModel
 from StochasticModels.LatticeModels.InterestRateModels.CShiftedLogNormalModel import ShiftedLogNormalModel
+from StochasticModels.LatticeModels.InterestRateModels.CShiftedLocalVolatilityModel import ShiftedLocalVolatility
 
 
 class OptimiserTests(unittest.TestCase):
@@ -287,6 +288,49 @@ class StochasticModelTests(unittest.TestCase):
         for phi in phi_vec:
             for sigma in sigma_vec:
                 sln = ShiftedLogNormalModel(d, x_min, x_max, phi, sigma, rates_curve)
+                sln.set_initial_state_index(rates_curve.spot_rate(0))
+                x0 = sln.x0
+                sln.create_total_discounted_stochastic_kernels(t_vector)
+                sln.calculate_drift_adjustment()
+
+                for i in range(0, len(t_vector)):
+                    discounted_sk = sln.total_discounted_stochastic_kernels[t_vector[i]]
+                    adjusted_sk = discounted_sk * sln.total_drift_adjustment[t_vector[i]]
+                    model_df = np.dot(adjusted_sk[x0, :], np.ones((d, 1)))
+                    market_df = sln.underlying_curve.discount_factor(0, t_vector[i])
+
+                    error = 100 * abs(market_df / model_df - 1)
+                    self.assertLess(error, 1e-10, "Calibration didn't work")
+
+    def test_local_vol_lambda_calibration(self):
+        """
+        Verifies that the drift adjustment is properly calculated
+        :return:
+        """
+        rates_curve = NelsonSiegelDiscountCurve(date(2000, 1, 1), 2e-2, -2.5e-2, -0.03, .5)
+
+        phi = .1
+        x_min = 0
+        x_max = 0.05
+        d = 128
+
+        n = 4
+
+        sigma_min = 0.005
+        sigma_max = 0.015
+        sigma_vec = np.linspace(sigma_min, sigma_max, n)
+
+        beta_min = 0.005
+        beta_max = 0.995
+        beta_vec = np.linspace(beta_min, beta_max, n)
+
+        t_min = 60
+        t_max = 10000
+        t_vector = np.linspace(t_min, t_max, n)
+
+        for beta in beta_vec:
+            for sigma in sigma_vec:
+                sln = ShiftedLocalVolatility(d, x_min, x_max, phi, sigma, beta, rates_curve)
                 sln.set_initial_state_index(rates_curve.spot_rate(0))
                 x0 = sln.x0
                 sln.create_total_discounted_stochastic_kernels(t_vector)
